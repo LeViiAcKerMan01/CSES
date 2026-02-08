@@ -1,42 +1,30 @@
 #include<bits/stdc++.h>
 using namespace std;
-unordered_map<int, int> mp;
+#define ll long long int
 
-// void printPrimeFactors(int n){
-//     if(n <= 1) return;
-//     for(int i = 2; i * i <= n; i++){
-//         int cnt = 0;
-//         while(n % i == 0){
-//             cnt++;
-//             n = n / i;
-//         }
-//         if(cnt){
-//             mp[i] = cnt;
-//         }
-//     }
-//     if(n > 1){
-//         mp[n]++;
-//     }
-// }
-
-int trailingZeroes(int n){
-    int res = 0;
-
-    for(int i = 5; i <= n; i *= 5){
-        res = res + (n / i);
-    }
-    return res;
-}
 int main(){
     int n;
     cin >> n;
-    // printPrimeFactors(n);
+    vector<int> arr(n, 0);
+    for(int i = 0; i < n; i++){
+        cin >> arr[i];
+    }
 
-    // for(auto it : mp){
-    //     cout<<it.first<<" -> "<<it.second<<endl;
-    // }
+    
+    ll minDiff = INT_MAX;
+    for(ll mask = 0; mask < (1 << n); mask++){
+        ll sumA = 0;
+        ll sumB = 0;
 
-    int trailZero = trailingZeroes(n);
-    cout<<trailZero<<endl;
+        for(ll position = 0; position < n; position++){
+            if(mask & (1 << position)){
+                sumA += arr[position];
+            }else{
+                sumB += arr[position];
+            }
+        }
+        minDiff = min(minDiff, abs(sumA - sumB));
+    }
 
+    cout<<minDiff<<endl;
 }
