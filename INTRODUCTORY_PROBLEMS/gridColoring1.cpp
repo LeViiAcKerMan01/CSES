@@ -1,39 +1,59 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-int main(){
-    int n;
-    cin >> n;
-    vector<string> chessboard(n, "");
-    for(int i = 0; i < n; i++){
-        cin >> chessboard[i];
+bool isValid(int currRow, int currCol, int R, int C){
+    if(currRow < 0 || currRow >= R || currCol < 0 || currCol >= C){
+        return false;
     }
-    vector<pair<int, int>> moves = {{2, 1}, {2, -1}, {-2, -1}, {-2, 1}, {1, -2}, {1, 2}, {-1, -2}, {-1, 2}};
-    vector<vector<int>> dist(n, vector<int>(n, -1));
-    pair<int, int> start = {0, 0};
+    return true;
+}
 
-    queue<pair<int, int>> q;
-    dist[start.first][start.second] = 0;
-    q.push(start);
-    
-    while(!q.empty()){
-        auto p = q.front();
-        q.pop();
+void solve(){
+    int n, m;
+    cin >> n >> m;
+    vector<string> grid(n);
 
-        for(int i = 0; i < 8; i++){
-            int dx = p.first + moves[i].first;
-            int dy = p.second + moves[i].second;
-            if(dx >= 0 && dx < n && dy >= 0 && dy < n && dist[dx][dy] == -1){
-                dist[dx][dy] = dist[p.first][p.second] + 1;
-                q.push({dx, dy});
+    // taking a row of characters as the input
+    for(int i = 0; i < n; i++){
+        cin >> grid[i];
+    }
+
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            set<char> not_allowed;
+
+            not_allowed.insert(grid[i][j]);
+            // To check for the left square
+            if(isValid(i, j-1, n, m)){
+                not_allowed.insert(grid[i][j-1]);
+            }
+            // To check for the upper square
+            if(isValid(i-1, j, n, m)){
+                not_allowed.insert(grid[i-1][j]);
+            }
+
+            bool filled = false;
+
+            for(int k = 0; k < 4; k++){
+                char ch = 'A' + k;
+                if(not_allowed.find(ch) == not_allowed.end()){
+                    grid[i][j] = ch;
+                    filled = true;
+                    break;
+                }
+            }
+            if(!filled){
+                cout<<"IMPOSSIBLE"<<"\n";
+                return;
             }
         }
     }
 
     for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
-            cout<<dist[i][j]<<" ";
-        }
-        cout<<"\n";
+        cout<<grid[i]<<"\n";
     }
+}
+
+int main(){
+    solve();
 }
