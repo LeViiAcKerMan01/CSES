@@ -1,80 +1,57 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
+#define ll long long int
 
-using ll = long long;
-
-// Add number to window
-void add_number(ll x, vector<int> &bit_count, ll &current_or) {
-    for (int i = 0; i < 31; i++) {
-        if (x & (1LL << i)) {
-            bit_count[i]++;
-            if (bit_count[i] == 1) {
-                current_or |= (1LL << i);  // turn bit ON
-            }
-        }
-    }
-}
-
-// Remove number from window
-void remove_number(ll x, vector<int> &bit_count, ll &current_or) {
-    for (int i = 0; i < 31; i++) {
-        if (x & (1LL << i)) {
-            bit_count[i]--;
-            if (bit_count[i] == 0) {
-                current_or &= ~(1LL << i);  // turn bit OFF
-            }
-        }
-    }
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    ll n, k;
+int main(){
+    int n, k;
     cin >> n >> k;
 
     ll x, a, b, c;
     cin >> x >> a >> b >> c;
-
-    vector<int> bit_count(31, 0);
-    ll current_or = 0;
-    ll result = 0;
-
-    // Only store current window of size k (circular)
-    vector<ll> window(k);
-
-    // First element
-    window[0] = x;
-    add_number(window[0], bit_count, current_or);
-
-    // Generate rest of first window
-    for (int i = 1; i < k; i++) {
-        window[i] = (a * window[i - 1] + b) % c;
-        add_number(window[i], bit_count, current_or);
+    
+    vector<ll> arr(n, 0);
+    
+    // vector creation
+    for(int i = 0; i < n; i++){
+        if(i == 0){
+            arr[i] = x;
+        }
+        else{
+            arr[i] = (a * arr[i-1] + b) % c;
+        }
     }
 
-    result ^= current_or;
+    // prefix ORs
+    vector<ll> pf_ors(n);
 
-    // Slide window
-    for (ll i = k; i < n; i++) {
-
-        // Generate next value
-        ll new_value = (a * window[(i - 1) % k] + b) % c;
-
-        // Element leaving window
-        ll old_value = window[i % k];
-
-        remove_number(old_value, bit_count, current_or);
-
-        // Replace with new value
-        window[i % k] = new_value;
-        add_number(new_value, bit_count, current_or);
-
-        result ^= current_or;
+    for(int i = 0; i < n; i++){
+        if(i % k == 0){
+            pf_ors[i] = arr[i];
+        }
+        else{
+            pf_ors[i] = pf_ors[i-1] | arr[i];
+        }
     }
 
-    cout << result << "\n";
+    // suffix ORs
+    vector<ll> sf_ors(n);
+    sf_ors[n-1] = arr[n-1];
+    for(int i = n-2; i >= 0; i--){
+        if(i % k == k-1){
+            sf_ors[i] = arr[i];
+        }
+        else{
+            sf_ors[i] = arr[i] | sf_ors[i+1]; 
+        }
+    }
 
-    return 0;
+    // storing and printing the answer
+    ll ans = 0;
+
+    for(int j = k-1; j < n; j++){
+        ll curOR = pf_ors[j] | sf_ors[j-k+1];
+        ans ^= curOR;
+    }
+
+    cout<<ans<<"\n";
 }
