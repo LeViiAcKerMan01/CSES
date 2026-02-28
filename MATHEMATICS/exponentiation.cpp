@@ -22,7 +22,7 @@ int main(){
     while(t--){
         ll a, b;
         cin >> a >> b;
-        ll ans = binaryExponentiation(a, b, mod);
-        cout<<ans<<'\n';
+        ll power = binaryExponentiation(a, b, mod);
+        cout<<power<<'\n';
     }
 }
