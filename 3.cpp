@@ -1,24 +1,38 @@
 #include<bits/stdc++.h>
 using namespace std;
-#define ll long long int
+#define  ll long 
+
+ll a[1000005], pre[1000005];
 
 int main(){
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    ll n;
-    cin >> n;
-    ll a[n] = {0};
 
-    for(int i = 0; i < n; i++){
-        cin >> a[i];
-    }
-    sort(a, a + n);
-    // this takes TC : O( N logN)
-    ll median = a[n / 2];
+    int t;
+    // cin >> t;
+    // while(t--){
+        int n;
+        cin >> n;
+        // Fills all the elements of pre array with 0
+        memset(pre, 0, sizeof(pre));
+        
+        // This implies that NULL subarray occurs atleast once
+        pre[0] = 1;
 
-    ll minCost = 0;
-    for(int i = 0; i < n; i++){
-        minCost += abs(a[i] - median);
-    }
-    cout<<minCost<<'\n';    
+        int sum = 0;
+        // read the input here
+        for(int i = 0; i < n; i++){
+            cin >> a[i];
+            sum += a[i];
+            sum %= n;
+            // To make the sum POSITIVE if it was NEGATIVE already
+            sum = (sum +n) % n;
+            pre[sum]++;
+        }
+        ll ans = 0;
+        for(int i = 0; i < n; i++){
+            ll m = pre[i]; 
+            ans += ((m) * (m-1)) / 2; // C(m, 2);
+        }
+        cout<<ans<<'\n';
+    // }
+    return 0;
 }
